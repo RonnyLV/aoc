@@ -3,18 +3,18 @@
 $cache = [];
 
 function scanLine(
-    int    $cellIndex,
-    int    $occurrenceIndex,
-    int    $current,
+    int $cellIndex,
+    int $occurrenceIndex,
+    int $current,
     string $cellsString,
     string $newString,
-    array  $occurrences,
-    int    $occurrenceCount,
-    int    $cellStringLength
-): int
-{
+    array $occurrences,
+    int $occurrenceCount,
+    int $cellStringLength,
+    string $implodedOccurrences
+): int {
     global $cache;
-    $cacheKey = "{$cellIndex}:{$occurrenceIndex}:{$current}:{$cellsString}:" . implode(".", $occurrences);
+    $cacheKey = "{$cellIndex}:{$occurrenceIndex}:{$current}:{$cellsString}:{$implodedOccurrences}";
 
     if (isset($cache[$cacheKey])) {
         return $cache[$cacheKey];
@@ -28,7 +28,7 @@ function scanLine(
     if ($cellIndex === $cellStringLength) {
         // trailing . or end of sequence
         if (
-            ($occurrenceIndex === ($occurrenceCount - 1) &&
+            ($occurrenceIndex === $occurrenceCount - 1 &&
                 $currentOccurrence === $current) ||
             ($occurrenceIndex >= $occurrenceCount && $current === 0)
         ) {
@@ -53,7 +53,8 @@ function scanLine(
             newString: $newString,
             occurrences: $occurrences,
             occurrenceCount: $occurrenceCount,
-            cellStringLength: $cellStringLength
+            cellStringLength: $cellStringLength,
+            implodedOccurrences: $implodedOccurrences
         );
     }
 
@@ -69,7 +70,8 @@ function scanLine(
                 newString: $newString,
                 occurrences: $occurrences,
                 occurrenceCount: $occurrenceCount,
-                cellStringLength: $cellStringLength
+                cellStringLength: $cellStringLength,
+                implodedOccurrences: $implodedOccurrences
             );
         } elseif ($currentOccurrence === $current) {
             // stay on same occurrence if not started
@@ -81,7 +83,8 @@ function scanLine(
                 newString: $newString,
                 occurrences: $occurrences,
                 occurrenceCount: $occurrenceCount,
-                cellStringLength: $cellStringLength
+                cellStringLength: $cellStringLength,
+                implodedOccurrences: $implodedOccurrences
             );
         }
     }
@@ -137,7 +140,8 @@ foreach ($lines as $line) {
         newString: $copiedItemsStr,
         occurrences: $copiedCellOccurrences,
         occurrenceCount: count($copiedCellOccurrences),
-        cellStringLength: strlen($copiedItemsStr)
+        cellStringLength: strlen($copiedItemsStr),
+        implodedOccurrences: implode(",", $copiedCellOccurrences)
     );
 
     echo $line . " :::: $result\n";
@@ -147,4 +151,4 @@ foreach ($lines as $line) {
 echo "The result: $sum\n";
 
 //15690445806391
-//
+//15454556629917
